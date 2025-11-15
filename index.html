@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script data-cookieconsent="ignore">    window.dataLayer = window.dataLayer || [];    function gtag() {        dataLayer.push(arguments);    }    gtag("consent", "default", {        ad_personalization: "denied",        ad_storage: "denied",        ad_user_data: "denied",        analytics_storage: "denied",        functionality_storage: "denied",        personalization_storage: "denied",        security_storage: "granted",        wait_for_update: 500,    });    gtag("set", "ads_data_redaction", true);    gtag("set", "url_passthrough", false);</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L9S57FEJHB"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-L9S57FEJHB');
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MDJQBQRJ');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="UTF-8">
+    <!-- Recommended: Add a Content Security Policy to mitigate XSS attacks -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https:;
+        script-src 'self' https://cdnjs.cloudflare.com https://www.googletagmanager.com https://consent.cookiebot.com https://consentcdn.cookiebot.com https://static.cloudflareinsights.com 'unsafe-eval' 'unsafe-inline';
+        style-src 'self' https://fonts.googleapis.com 'unsafe-inline' https://www.googletagmanager.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: https://www.google-analytics.com https://imgsct.cookiebot.com https://www.googletagmanager.com;
+        frame-src 'self' https://consentcdn.cookiebot.com;
+        connect-src 'self' https://www.youtube.com https://cdnjs.cloudflare.com https://www.google-analytics.com https://consent.cookiebot.com https://consentcdn.cookiebot.com https://www.googletagmanager.com;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Files Matching and Comparison Tool</title>
+    <link rel="stylesheet" href="style.css?v=1.1.29">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure modal sections are scrollable and don't overflow */
+        #header-definition-modal .modal-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .header-definition-options {
+            flex-grow: 1; /* Allow this section to take up available space */
+            overflow-y: auto; /* Make the whole options area scrollable if needed */
+        }
+        .header-option-section {
+            /* overflow-y: auto; -- This is now handled by the parent */
+            margin-bottom: 10px;
+        }
+        /* Align custom header inputs horizontally */
+        .custom-header-input-wrapper {
+            display: inline-block;
+        }
+        .custom-header-input-wrapper label {
+            display: block; /* Place label on top of the input */
+        }
+        /* Fix for inconsistent CSV modal content overflow */
+        #header-preview-table {
+            overflow: auto; /* Add both horizontal and vertical scrollbars if needed */
+            max-width: 100%;
+            max-height: 30vh; /* Constrain height to 30% of the viewport height */
+        }
+        #custom-csv-headers-container {
+            overflow-x: auto; /* Add horizontal scrollbar for many custom inputs */
+            white-space: nowrap; /* Prevent inputs from wrapping to the next line */
+            padding-bottom: 10px; /* Add some space for the scrollbar */
+            max-width: 100%;
+        }
+        /* Make font smaller in fixed-width editor to fit more content */
+        #fixed-width-preview {
+            font-size: 12px;
+            line-height: 1.4; /* Adjust line height for readability */
+        }
+        /* New class for the inconsistent CSV header preview table */
+        .header-preview-table {
+            font-size: 10px;
+            line-height: 1;
+        }
+        /* Style for disabled dropdown menu items */
+        .dropdown-menu a.disabled {
+            color: var(--text-muted-color);
+            cursor: not-allowed;
+        }
+        /* Styles for the button loader/spinner */
+        .btn-loader {
+            border: 2px solid var(--text-muted-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style for template options list */
+        .template-options-list label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        /* Style for template name input */
+        .template-name-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .template-name-input-group label {
+            margin-right: 10px;
+            font-weight: 500;
+            flex-shrink: 0; /* Prevent label from shrinking */
+        }
+        .template-name-input-group .form-control {
+            flex-grow: 1; /* Make input take up remaining space */
+        }
+        /* New class to ensure vertical layout in save template modal */
+        .template-modal-body {
+            display: flex;
+            flex-direction: column;
+        }
+        /* New class for a medium-sized modal */
+        .modal-content-md {
+            max-width: 430px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MDJQBQRJ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <header>
+        <div class="header-main-content">
+            <div class="header-title-container">
+                <img src="fm_logo.png" alt="Files Match logo" class="header-logo">
+                <h1>Files Match</h1>
+            </div>
+            <p>Select two files (CSV, Excel, JSON, etc.), match key columns by selecting corresponding headers, and compare their content. Your data never leaves your device, as all the comparison operations are handled locally.</p>
+        </div>
+    <div class="header-actions">
+            <button id="reset-all-btn" class="btn btn-secondary btn-sm hidden" title="Clear all files and settings">Clear All</button>
+            <div class="dropdown-container">
+                <button id="tutorial-dropdown-btn" class="btn btn-secondary btn-sm">
+                    Tutorial <span class="dropdown-arrow">▼</span>
+                </button>
+                <div id="tutorial-dropdown-menu" class="dropdown-menu hidden">
+                    <a href="#" id="start-interactive-tutorial-action">
+                        <svg class="tutorial-icon" viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.746c-.917-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/></svg>
+                        <span>Interactive Tutorial</span>
+                    </a>
+                    <a href="https://www.youtube.com/@FilesMatch" target="_blank" rel="noopener noreferrer" id="youtube-tutorial-action">
+                        <svg class="youtube-icon" viewBox="0 0 28 20" width="21" height="15"><rect width="28" height="20" rx="6" fill="#FF0000"></rect><polygon points="11,5 19,10 11,15" fill="white"></polygon></svg>
+                        <span>Files Match on YouTube</span>
+                    </a>
+                </div>
+            </div>        </div>
+    </header>
+
+    <main>
+        <section class="file-selectors">
+            <div class="file-control" id="file-control-1">
+                <h2>File 1</h2>
+                <div class="drop-zone-overlay">
+                    <div class="drop-zone-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/><path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/></svg>
+                    </div>
+                    <div>Drop file here</div>
+                </div>
+                <div class="file-input-wrapper">
+                    <label for="file1" class="btn btn-secondary">Choose File</label>
+                    <span id="file1-name" class="file-name">No file chosen</span>
+                    <input type="file" id="file1" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xml,.json">
+                </div>
+                <div id="delimiter-wrapper-1" class="delimiter-control hidden">
+                    <label for="delimiter1">Delimiter:</label>
+                    <select id="delimiter1">
+                        <option value="" disabled selected hidden>-- Please Select --</option>
+                        <option value=",">Comma (,)</option>
+                        <option value=";">Semicolon (;)</option>
+                        <option value="\t">Tab (\t)</option>
+                        <option value="|">Pipe (|)</option>
+                        <option value="fixed">Fixed-width</option>
+                        <option value="other">Other...</option>
+                    </select>
+                    <div class="no-header-control">
+                        <input type="checkbox" id="no-header-checkbox-1">
+                        <label for="no-header-checkbox-1">File has no header</label>
+                    </div>
+                </div>
+            </div>
+            <div class="file-control" id="file-control-2">
+                <h2>File 2</h2>
+                <div class="drop-zone-overlay">
+                    <div class="drop-zone-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/><path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/></svg>
+                    </div>
+                    <div>Drop file here</div>
+                </div>
+                <div class="file-input-wrapper">
+                    <label for="file2" class="btn btn-secondary btn-disabled" id="file2-label">Choose File</label>
+                    <span id="file2-name" class="file-name">No file chosen</span>
+                    <input type="file" id="file2" accept=".csv,.txt,.tsv,.xlsx,.xlsm,.xml,.json" disabled>
+                </div>
+                <div id="delimiter-wrapper-2" class="delimiter-control hidden">
+                    <label for="delimiter2">Delimiter:</label>
+                    <select id="delimiter2">
+                        <option value="" disabled selected hidden>-- Please Select --</option>
+                        <option value=",">Comma (,)</option>
+                        <option value=";">Semicolon (;)</option>
+                        <option value="\t">Tab (\t)</option>
+                        <option value="|">Pipe (|)</option>
+                        <option value="fixed">Fixed-width</option>
+                        <option value="other">Other...</option>
+                    </select>
+                    <div class="no-header-control">
+                        <input type="checkbox" id="no-header-checkbox-2">
+                        <label for="no-header-checkbox-2">File has no header</label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="matching-actions-container" class="matching-actions hidden">
+            <div class="matching-actions-left">
+                <button id="clear-matches-btn" class="btn btn-secondary">Clear Column Matches</button>
+                <button id="manual-match-btn" class="btn btn-secondary" disabled title="This button activates when at least one column pair is matched.">Map Key Values</button>
+            </div>
+            <!-- Template Management is now here -->
+            <div id="template-management-container" class="dropdown-container hidden">
+                <button id="template-dropdown-btn" class="btn btn-secondary" disabled>
+                    <svg class="btn-icon-left" viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5z"/></svg>
+                    <span class="btn-text">Template</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+                <div id="template-dropdown-menu" class="dropdown-menu hidden">
+                    <a href="#" id="load-template-action">
+                        <svg class="file-icon" viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L6.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                        <span>Load Template</span>
+                    </a>
+                    <a href="#" id="save-template-action">
+                        <svg class="file-icon" viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+                        <span>Save Template</span>
+                    </a>
+                </div>
+                <input type="file" id="apply-template-input" accept=".json" style="display: none;">
+            </div>
+        </div>
+
+        <section class="previews-container">
+            <canvas id="line-canvas"></canvas>
+            <div class="preview-wrapper hidden" id="preview-wrapper-1">
+                <div class="preview-header">
+                    <h3>File 1 Preview (Top 20 rows)</h3>
+                    <button class="btn btn-icon toggle-filter-btn" data-file-index="1" title="Toggle Filters" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.74.439L7 12.439V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/></svg>
+                    </button>
+                </div>
+                <div class="filter-builder hidden" id="filter-builder-1">
+                    <div class="filter-rules-container"></div>
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary add-rule-btn" data-file-index="1">+ Add Condition</button>
+                        <button class="btn btn-primary apply-filters-btn" data-file-index="1">Apply Filters</button>
+                    </div>
+                </div>
+                <div class="table-container" id="preview1"></div>
+            </div>
+            <div class="preview-wrapper hidden" id="preview-wrapper-2">
+                <div class="preview-header">
+                    <h3>File 2 Preview (Top 20 rows)</h3>
+                    <button class="btn btn-icon toggle-filter-btn" data-file-index="2" title="Toggle Filters" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.74.439L7 12.439V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/></svg>
+                    </button>
+                </div>
+                <div class="filter-builder hidden" id="filter-builder-2">
+                    <div class="filter-rules-container"></div>
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary add-rule-btn" data-file-index="2">+ Add Condition</button>
+                        <button class="btn btn-primary apply-filters-btn" data-file-index="2">Apply Filters</button>
+                    </div>
+                </div>
+                <div class="table-container" id="preview2"></div>
+            </div>
+        </section>
+
+
+        <section class="comparison-controls">
+            <div class="run-actions">
+                <button id="run-comparison-btn" class="btn btn-primary" disabled title="This button activates when at least one column pair is matched. Left click on the corresponding headers to pair columns.">
+                    <span class="btn-text">Run Comparison</span>
+                    <span class="btn-loader hidden"></span>
+                </button>
+                <div class="grouping-control">
+                    <label for="group-by-key">Group Result by Key Columns:</label>
+                    <input type="checkbox" id="group-by-key">
+                </div>
+            </div>
+        </section>
+
+
+
+        <section id="results-section" class="hidden">
+            <div class="results-header">
+                <h2>Comparison Results Preview</h2>
+                <div class="download-actions"> <div class="dropdown-container"><button id="download-results-btn" class="btn btn-secondary">
+                            <svg class="btn-icon-left" viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+                            <span class="btn-text">Download Results</span>
+                            <span class="btn-loader hidden"></span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div id="download-dropdown-menu" class="dropdown-menu hidden">
+                            <a href="#" id="download-csv-action">
+                                <svg class="file-icon" viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM3.5 15a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5Zm0-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5Zm0-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5Zm2.5-.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Zm0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Zm0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z"/></svg>
+                                <span>CSV (.csv)</span>
+                            </a>
+                            <a href="#" id="download-excel-action">
+                                <svg class="file-icon excel-icon" viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M5.18 4.616a.5.5 0 0 1 .704.064L8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.678a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.322a.5.5 0 0 1 .064-.706z"/><path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/></svg>
+                                <span>Excel (.xlsx)</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="results-options" class="hidden">
+                <label class="results-option-item">
+                    <input type="checkbox" id="show-diff-only-checkbox" /> Show rows with differences only
+                </label>
+                <label class="results-option-item">
+                    <input type="checkbox" id="hide-unmatched-keys-checkbox" /> Hide unmatched key values
+                </label>
+                <label id="diff-column-option" class="results-option-item hidden">
+                    <input type="checkbox" id="show-diff-columns-checkbox" /> Show 'Diff' columns
+                </label>
+                <label id="numeric-tolerance-option" class="results-option-item hidden">
+                    Numeric Tolerance:
+                    <input type="number" id="numeric-tolerance-input" value="0" min="0" step="any" title="Ignore numeric differences smaller than this value.">
+                </label>
+            </div>
+            <div class="table-container" id="results-table-container"></div>
+            <div id="results-summary"></div>
+        </section>
+    </main>
+
+    <!-- Fixed-width Editor Modal -->
+    <div id="fixed-width-modal" class="modal-container hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Define Fixed-width Columns</h2>
+                <button id="modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Click on the text below to create column breaks. Drag breaks to move them.</br>Note, if intending to apply a template, click Apply Columns button to continue.</p>
+                <div class="fixed-width-editor">
+                    <div id="editor-content-wrapper">
+                        <pre id="fixed-width-preview"></pre>
+                        <div id="break-lines-overlay"></div>
+                    </div>
+                </div>
+                <div id="header-options"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-actions">
+                    <button id="suggest-fixed-width-btn" class="btn btn-secondary">Suggest Breaks</button>
+                    <button id="apply-fixed-width-btn" class="btn btn-primary">Apply Columns</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Value Mapping Modal -->
+    <div id="value-mapping-modal" class="modal-container hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Map Key Values</h2>
+                <button id="value-map-modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="value-mapping-container">
+                    <div class="modal-loader hidden">
+                        <div class="spinner"></div>
+                        <p>Finding matches...</p>
+                    </div>
+                    <p>Drag values from one list and drop them onto a value in the other list to create a manual mapping. Mapped items are highlighted.</p>
+
+                    <div class="value-map-header">
+                        <h4>Map Key Values</h4>
+                        <div class="primary-key-selectors">
+                            <label class="primary-key-selector-label">
+                                <input type="radio" name="primary-key-source" value="1" checked> Use File 1's values as Key when grouping
+                            </label>
+                            <label class="primary-key-selector-label">
+                                <input type="radio" name="primary-key-source" value="2"> Use File 2's values as Key when grouping
+                            </label>
+                        </div>
+                    </div>
+                    <div class="value-search-container">
+                        <input type="text" id="value-search-1" class="value-search-box" placeholder="Search File 1 values...">
+                        <input type="text" id="value-search-2" class="value-search-box" placeholder="Search File 2 values...">
+                    </div>
+                    <div class="mapped-values-wrapper">
+                        <h5>Mapped Values</h5>
+                        <div id="mapped-values-list" class="mapped-values-list"></div>
+                    </div>
+                    <div class="unmapped-values-container">
+                        <div class="value-list-wrapper">
+                            <h5 id="value-map-header-1">File 1 Unmapped</h5>
+                            <div id="value-list-1" class="value-list"></div>
+                        </div>
+                        <div class="value-list-wrapper">
+                            <h5 id="value-map-header-2">File 2 Unmapped</h5>
+                            <div id="value-list-2" class="value-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="legend-container">
+                    <div class="legend-item"><span class="legend-color-box" style="background-color: var(--selected-color);"></span>Mapped</div>
+                    <div class="legend-item"><span class="legend-color-box" style="background-color: var(--suggested-color);"></span>Suggested Mapped</div>
+                    <div class="legend-item"><span class="legend-color-box" style="background-color: var(--surface-color); border: 1px solid var(--border-color);"></span>Unmapped</div>
+                </div>
+                <div class="modal-footer-actions">
+                    <button id="unmap-all-btn" class="btn btn-secondary">Unmap All</button>
+                    <button id="apply-value-map-btn" class="btn btn-primary">Apply Mappings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Options Modal -->
+    <div id="excel-options-modal" class="modal-container hidden">
+        <div class="modal-content modal-content-sm">
+            <div class="modal-header">
+                <h2 id="excel-modal-header">Excel Import Options</h2>
+                <button id="excel-modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-loader hidden">
+                    <div class="spinner"></div>
+                    <p>Reading workbook...</p>
+                </div>
+                <div id="excel-options-form">
+                    <div class="excel-option-group">
+                        <label for="worksheet-select">Select Worksheet:</label>
+                        <select id="worksheet-select"></select>
+                    </div>
+                    <div class="excel-option-group">
+                        <label for="cell-range-input">Specify Cell Range (e.g., A1:G50):</label>
+                        <input type="text" id="cell-range-input" placeholder="e.g., A1:G50 or leave blank for auto-detect">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="apply-excel-options-btn" class="btn btn-primary">Apply & Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Popover -->
+    <div id="tutorial-overlay" class="hidden"></div>
+    <div id="tutorial-popover" class="hidden">
+        <div id="tutorial-content"></div>
+        <div class="tutorial-navigation">
+            <span id="tutorial-step-indicator"></span>
+            <button id="tutorial-next" class="btn btn-secondary btn-sm">Next</button>
+            <button id="tutorial-load-sample-btn" class="btn btn-primary btn-sm hidden">Load Sample File</button>
+            <button id="tutorial-end" class="btn btn-secondary btn-sm">End Tour</button>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div id="terms-modal" class="modal-container hidden">
+        <div class="modal-content modal-content-sm">
+            <div class="modal-header">
+                <h2>Terms and Conditions of Use</h2>
+            </div>
+            <div class="modal-body" id="terms-modal-body">
+            <p>Welcome to the Files Match. By accessing or using this website, you agree to comply with and be bound by these Terms and Conditions. If you do not agree to these terms, you must not use the tool.</p>
+
+             <h2>1. General Terms</h2>
+            <ul>
+                <li><strong>"As Is" Basis:</strong> The Files Match is provided on an "as is" and "as available" basis, without any warranties of any kind, express or implied. We do not guarantee the accuracy, completeness, or reliability of any comparison results, and you acknowledge that your use of the tool is at your own risk.</li>
+                <li><strong>Modification and Termination:</strong> We reserve the right to modify, suspend, or discontinue the website and its features at any time, without notice. We are not liable for any losses, damages, or interruptions that may result from such changes.</li>
+                <li><strong>Changes to Terms:</strong> These Terms and Conditions may be updated or modified from time to time. Any changes will be posted on this page, and your continued use of the website after such changes constitutes your acceptance of the updated terms.</li>
+            </ul>
+
+            <h2>2. Liability and Limitations</h2>
+            <ul>
+                <li><strong>No Liability:</strong> In no event shall the creators, operators, or affiliates of this website be held liable for any direct, indirect, incidental, consequential, special, or punitive damages, or any other damages whatsoever, including but not limited to data loss, data corruption, business interruption, or hardware damage resulting from the use of this tool, arising from or related to the use of this website or the comparison tool.</li>
+                <li><strong>Indemnity:</strong> You agree to indemnify, defend, and hold harmless the creators, operators, and affiliates of this website from any and all claims, damages, liabilities, costs, and expenses (including reasonable legal fees) arising from your use or misuse of the website, your breach of these Terms and Conditions, or your violation of any third-party rights.</li>
+                <li><strong>Limitation of Liability:</strong> To the fullest extent permitted by applicable law, the total liability of the creators and operators of this website shall not exceed the amount paid by you, if any, for accessing the tool or service in the twelve (12) months prior to the event giving rise to the liability.</li>
+            </ul>
+
+            <h2>3. User Responsibilities</h2>
+            <ul>
+                <li><strong>Accuracy of Data:</strong> You are solely responsible for the data you upload to the Files Match. It is your responsibility to ensure the data's accuracy and integrity. We make no representations regarding the completeness or correctness of the data you upload or the results generated.</li>
+                <li><strong>Data Backups:</strong> It is strongly recommended that you back up your data before uploading it to the website. The creators of the website do not store or retain any data, but we are not responsible for any loss, corruption, or damage to the data uploaded to the tool.</li>
+                <li><strong>Prohibited Content:</strong> You must not upload any content that is illegal, harmful, or infringes on the intellectual property rights of third parties. This includes, but is not limited to, confidential, sensitive, or personally identifiable information (PII) of yourself or others.</li>
+                <li><strong>No Sensitive Information:</strong> You must not upload sensitive or confidential information to the website. This includes financial, medical, or personal information that could result in harm if exposed. The website does not collect or store any personal information; however, you are responsible for ensuring that the data you upload complies with relevant privacy laws.</li>
+            </ul>
+
+            <h2>4. Intellectual Property</h2>
+            <ul>
+                <li><strong>Ownership:</strong> All content, features, and functionality on this website, including but not limited to text, software, code, logos, graphics, and trademarks, are owned by or licensed to the creators of this website and are protected by intellectual property laws.</li>
+                <li><strong>Prohibited Use:</strong> You are prohibited from copying, distributing, modifying, reverse-engineering, decompiling, or otherwise manipulating the code or any part of the website or tool without explicit written permission from the creators. Unauthorized use or misuse of the tool or its code will result in immediate termination of access and potential legal actions.</li>
+                <li><strong>License:</strong> By using this website, you are granted a limited, non-exclusive, non-transferable license to use the Files Match for personal or business purposes, in accordance with these Terms and Conditions.</li>
+            </ul>
+
+            <h2>5. Client-Side Processing and Hardware Performance</h2>
+            <ul>
+                <li><strong>Client-Side Operation:</strong> Files Match is a client-side web application. All file comparison and data processing are performed locally within your web browser using your device's own hardware. No part of your file data is sent to or stored on our servers.</li>
+                <li><strong>Performance Variation:</strong> The speed and overall performance of the tool are entirely dependent on your device's processing power, available memory, and the size and complexity of the files being compared. We do not control or influence the performance of your hardware.</li>
+                <li><strong>User Discretion:</strong> You are solely responsible for managing your hardware usage. When comparing large or complex files, you should exercise caution to avoid overloading your computer's processing and memory capabilities. We recommend minimizing the size of files to be compared to ensure optimal performance and avoid system strain.</li>
+                <li><strong>No Hardware Liability:</strong> We are not responsible for any damage to your hardware, software, or data that may occur as a result of using the Files Match, including but not limited to system freezes, crashes, or data corruption. By using this tool, you accept full responsibility for any risks associated with relying on your own hardware for processing.</li>
+            </ul>
+
+            <h2>6. Privacy and Data Security</h2>
+            <ul>
+                <li><strong>No Personal Data Collected:</strong> We do not collect, store, or process any personally identifiable information (PII) through the Files Match. The data you upload is used solely for the purpose of comparison and is not retained after processing.</li>
+                <li><strong>Data Security:</strong> While we take reasonable measures to ensure the security of the website and the data you upload, we cannot guarantee that the website will be free from unauthorized access, viruses, or other harmful components. You use the website and upload data at your own risk.</li>
+                <li><strong>Third-Party Links:</strong> This website may contain links to third-party websites or services. These links are provided solely for convenience, and we are not responsible for the content, privacy policies, or practices of any third-party websites.</li>
+            </ul>
+
+            <h2>7. Acceptable Use and Misuse</h2>
+            <ul>
+                <li><strong>Acceptable Use:</strong> You agree to use the Files Match for lawful purposes only. You may not use the website in any way that could harm, disable, overburden, or impair the website or interfere with any other party’s use of the website.</li>
+                <li><strong>Misuse:</strong> You agree not to use the website for any fraudulent, malicious, or illegal activities. This includes attempting to access the website’s code, data, or other resources in an unauthorized manner, or using the tool to exploit, harm, or defraud others.</li>
+                <li><strong>Compliance with Laws:</strong> You agree to comply with all applicable local, state, national, and international laws while using the Files Match.</li>
+            </ul>
+
+            <h2>8. Governing Law and Dispute Resolution</h2>
+            <ul>
+                <li><strong>Governing Law:</strong> These Terms and Conditions shall be governed by and construed in accordance with the laws of the jurisdiction in which the creators of the website are based, without regard to its conflict of law provisions.</li>
+                <li><strong>Dispute Resolution:</strong> Any disputes arising out of or in connection with these Terms and Conditions shall be resolved through binding arbitration administered by the American Arbitration Association (AAA), and shall take place in Miami, Florida. For international matters, the International Centre for Dispute Resolution (ICDR) is the appropriate division of the AAA.</li>
+            </ul>
+
+            <h2>9. Miscellaneous</h2>
+            <ul>
+                <li><strong>Severability:</strong> If any provision of these Terms and Conditions is found to be invalid, illegal, or unenforceable, the remaining provisions will remain in full force and effect.</li>
+                <li><strong>Entire Agreement:</strong> These Terms and Conditions, together with any other legal notices and agreements published by the creators of this website, shall constitute the entire agreement between you and the creators regarding the use of the website.</li>
+                <li><strong>Force Majeure:</strong> We are not liable for any failure or delay in the performance of the website's services due to events beyond our reasonable control, including but not limited to natural disasters, war, terrorism, or technical failures.</li>
+            </ul>
+
+            <h2>10. Analytics and Third-Party Services</h2>
+            <ul>
+                <li><strong>Google Analytics:</strong> This website uses Google Analytics 4 (GA4) to collect information about how users interact with our site. This service uses first-party cookies to gather anonymous usage data, such as page views, session duration, and user interactions. This information helps us understand user behavior and improve the website.</li>
+                <li><strong>Data Usage:</strong> The data collected by Google Analytics is used by us for internal analysis to enhance the functionality and user experience of the tool. Google also uses this data in accordance with its own privacy policy. For more information on how Google uses data when you use our site, please visit <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">Google's Privacy & Terms</a>.</li>
+                <li><strong>Consent:</strong> We use Google Consent Mode to manage your analytics preferences. Your consent for the use of analytics cookies will be requested via a consent banner upon your first visit. You can accept or decline the use of these cookies. Your choice will be respected on subsequent visits.</li>
+            </ul>
+
+            <h2>11. Cookie Policy</h2>
+            <ul>
+                <li><strong>What are Cookies:</strong> Cookies are small text files stored on your device by your web browser. We use cookies to enable certain functionalities and to collect analytics data.</li>
+                <li><strong>Types of Cookies:</strong> We use essential cookies for core website functionality and analytics cookies (via Google Analytics) to understand user engagement. By using our website, you may also be subject to third-party cookies from services like Google.</li>
+                <li><strong>Your Choices:</strong> You can control and manage cookies in various ways, including through our cookie consent banner and your browser settings. Please note that disabling essential cookies may affect the functionality of the website.</li>
+            </ul>
+
+            <p>If you have any questions or concerns about these Terms and Conditions, please contact us via feedback@filesmatch.com.</p>
+
+            </div>
+            <div class="modal-footer">
+                <button id="accept-terms-btn" class="btn btn-primary">I Understand and Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="modal-container hidden">
+        <div class="modal-content modal-content-sm">
+            <div class="modal-header">
+                <h2>Privacy Policy</h2>
+                <button id="privacy-modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body" id="privacy-modal-body">
+                <p><strong>Effective Date:</strong> October 19, 2025</p>
+                <p>Welcome to Files Match. Your privacy is important to us. This Privacy Policy explains how we handle your information when you use our tool.</p>
+
+                <h2>1. Information We Collect</h2>
+                <ul>
+                    <li><strong>Information You Provide:</strong> We do not require you to create an account or provide any Personal Identifiable Information (PII) to use our core service. If you contact us via email, we will use your email address solely to respond to your inquiry.</li>
+                    <li><strong>File Data:</strong> All file processing occurs entirely within your browser on your own computer (client-side). Your files and their contents are <strong>never</strong> uploaded to our servers.</li>
+                    <li><strong>Usage and Analytics Data:</strong> We use Google Analytics 4 (GA4) to collect anonymous information about how you interact with our website. This includes data such as which features are used, session duration, and general user engagement patterns. This data is aggregated and does not personally identify you.</li>
+                </ul>
+
+                <h2>2. How We Use Your Information</h2>
+                <ul>
+                    <li><strong>To Improve Our Service:</strong> The anonymous analytics data collected through Google Analytics helps us understand how our tool is used, identify popular features, and guide future improvements.</li>
+                    <li><strong>To Respond to Inquiries:</strong> If you contact us, we use the information you provide to address your questions, feedback, or support requests.</li>
+                </ul>
+
+                <h2>3. File Uploads & Processing</h2>
+                <ul>
+                    <li><strong>Temporary processing:</strong> Files uploaded to perform comparisons are processed in-memory or in temporary storage only for the duration required to complete the comparison. After processing, files and intermediate results are deleted unless you explicitly request otherwise.</li>
+                    <li><strong>User responsibility:</strong> You are responsible for ensuring you have the right to upload any file and for removing or anonymizing any sensitive data prior to upload.</li>
+                    <li><strong>Prohibited content:</strong> Do not upload confidential, highly sensitive, or regulated personal data (for example, financial account numbers, medical records, or unredacted PII) unless you have explicit assurances and controls in place.</li>
+                </ul>
+
+                <h2>4. Use of Cookies</h2>
+                <ul>
+                    <li><strong>Google Analytics:</strong> We use Google Analytics 4, which uses first-party cookies to distinguish users and analyze website traffic. The information generated by the cookie about your use of the website is transmitted to and stored by Google.</li>
+                    <li><strong>Google's Use of Data:</strong> Google uses this information to evaluate your use of our website, compile reports on website activity for us, and provide other services relating to website activity and internet usage. For more details, please review <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">how Google uses information from sites or apps that use their services</a>.</li>
+                    <li><strong>Your Consent:</strong> We use Google Consent Mode to manage your preferences for analytics tracking. Upon your first visit, you will be asked for consent to use analytics cookies. You can accept or decline, and your choice will be respected.</li>
+                </ul>
+                <h3>Cookie Declaration</h3>
+                <script id="CookieDeclaration" src="https://consent.cookiebot.com/67e2999f-b4fa-481a-b21f-41bf53e8ea37/cd.js" type="text/javascript" async></script>
+                <h2>5. Data Security</h2>
+                <ul>
+                    <li><strong>Reasonable measures:</strong> We implement reasonable administrative, technical, and physical safeguards designed to protect data in our possession against unauthorized access, disclosure, alteration, or destruction.</li>
+                    <li><strong>No absolute guarantees:</strong> Despite our efforts, no system can be completely secure. You use the service and upload data at your own risk.</li>
+                </ul>
+
+                <h2>6. Data Retention</h2>
+                <ul>
+                    <li>We do not retain your file data. Analytics data is retained by Google according to their data retention policies. Contact information from emails is retained only as long as necessary to resolve your inquiry.</li>
+                </ul>
+
+                <h2>7. Your Rights and Choices</h2>
+                <ul>
+                    <li><strong>Cookie Consent:</strong> You have the right to accept or decline the use of analytics cookies via our consent banner.</li>
+                    <li><strong>Browser Settings:</strong> You can also control cookies through your web browser's settings. Please note that disabling essential cookies may impact the website's functionality.</li>
+                </ul>
+
+                <h2>8. Third-Party Links</h2>
+                <ul>
+                    <li>Our website may contain links to other sites (like YouTube). We are not responsible for the privacy practices of these other sites.</li>
+                </ul>
+
+                <h2>9. Children's Privacy</h2>
+                <ul>
+                    <li>Our service is not directed to individuals under the age of 13. We do not knowingly collect personal information from children.</li>
+                </ul>
+
+                <h2>10. Changes to This Privacy Policy</h2>
+                <ul>
+                    <li>We may update this Privacy Policy from time to time. Any changes will be posted here with an updated effective date. Continued use of the service after changes constitutes acceptance of the updated Policy.</li>
+                </ul>
+
+                <h2>11. Contact Us</h2>
+                <p>If you have questions, requests, or concerns about this Privacy Policy or our privacy practices, please contact us at:</p>
+                <p class="muted"><strong>Email:</strong> <a href="mailto:[feedback@filesmatch.com]">feedback@filesmatch.com</a><br />
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Template Modal -->
+    <div id="save-template-modal" class="modal-container hidden">
+        <div class="modal-content modal-content-md">
+            <div class="modal-header">
+                <h2>Save Template Options</h2>
+                <button id="save-template-modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body template-modal-body">
+                <div class="template-name-input-group">
+                    <label for="template-name-input">Template Name:</label>
+                    <input type="text" id="template-name-input" placeholder="my-comparison-template" class="form-control">
+                </div>
+                <p>Select which settings to include in the template file.</p>
+                <div class="template-options-list">
+                    <label><input type="checkbox" id="save-columns-checkbox" checked> Column Pairings</label>
+                    <label><input type="checkbox" id="save-exclusions-checkbox" checked> Column Exclusions (Locks)</label>
+                    <label><input type="checkbox" id="save-filters-checkbox" checked> Filters</label>
+                    <label><input type="checkbox" id="save-mappings-checkbox" checked> Key Value Mappings</label>
+                    <p id="mappings-limit-warning" class="text-muted hidden" style="font-size: 0.9em; margin-left: 20px;">Cannot save mappings. Number of unique keys exceeds the limit of 1,000.</p>
+                    <label><input type="checkbox" id="save-fixedwidth-checkbox" checked> Fixed-width Settings</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-save-template-btn" class="btn btn-primary">Save Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Modal -->
+    <div id="contact-modal" class="modal-container hidden">
+        <div class="modal-content modal-content-sm">
+            <div class="modal-header">
+                <h2>Contact Us</h2>
+                <button id="contact-modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body" id="contact-modal-body">
+                <p>If you have any questions, feedback, or need support, please feel free to reach out.</p>
+                <h3>Email</h3>
+                <p>For general inquiries and support, please email us at: <a href="mailto:feedback@filesmatch.com">feedback@filesmatch.com</a></p>
+                <h3>Feedback</h3>
+                <p>We welcome your feedback! If you have suggestions for new features or improvements, please let us know.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Us Modal -->
+    <div id="about-modal" class="modal-container hidden">
+        <div class="modal-content modal-content-sm">
+            <div class="modal-header">
+                <h2>About Us</h2>
+                <button id="about-modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body" id="about-modal-body">
+                <h3>Purpose</h3>
+                <p>Files Match is a powerful, client-side tool designed to help you compare the contents of two files efficiently. Whether you're reconciling financial reports, verifying data integrity, or just need to spot differences between two datasets, this tool provides an intuitive interface to get the job done quickly without your data ever leaving your computer.</p>
+                <h3>Key Features</h3>
+                <ul>
+                    <li>Compare various file types including CSV, TXT, Fixed Position and Excel.</li>
+                    <li>Define multi-column keys for precise matching.</li>
+                    <li>Manually map key values that may differ between files (e.g., 'USA' vs 'United States').</li>
+                    <li>Filter data before comparison to focus on specific subsets.</li>
+                    <li>Group results by key and summarize numeric columns.</li>
+                    <li>Save and load comparison settings using templates.</li>
+                </ul>
+                <h3>Future Roadmap</h3>
+                <p>We are continuously working to improve Files Match. Our future plans include performance enhancements for very large files, support for additional file formats, and more advanced comparison features to provide even deeper insights into your data.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Definition Modal (for inconsistent CSVs) -->
+    <div id="header-definition-modal" class="modal-container hidden">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>Define File Headers</h2>
+                <button id="header-modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <p class="modal-sub-header">This file has an inconsistent structure. Please define the headers below.</p>
+            <div class="header-definition-options">
+                <div class="header-option-section">
+                    <h3>Option 1: Select a Row as Header</h3>
+                    <p>Click the radio button next to the row you want to use for column headers.</p>
+                    <div id="header-preview-table" class="header-preview-table">
+                        <!-- Preview table will be generated here -->
+                    </div>
+                </div>
+                <div class="header-option-section">
+                    <h3>Option 2: Define Custom Headers</h3>
+                    <p id="header-definition-p-inconsistent">Alternatively, provide a custom name for each column below.</p>
+                    <p id="header-definition-p-no-header" class="hidden">Provide a custom name for each column below.</p>
+                    <div id="custom-csv-headers-container" class="custom-headers-container">
+                        <!-- Custom header inputs will be generated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="apply-header-definition-btn" class="btn btn-primary">Apply Headers</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            By using this tool, you agree to the <a href="#" id="show-terms-link">Terms and Conditions</a> and <a href="#" id="show-privacy-link">Privacy Policy</a>. | 
+            <a href="#" id="show-contact-link">Contact Us</a> | 
+            <a href="#" id="show-about-link">About Us</a>
+        </p>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <script src="https://res.cdn.office.net/teams-js/2.17.0/js/MicrosoftTeams.min.js" integrity="sha384-3zTjB43sL3iMu2s3I7vKx22h3cAn9/LgCg5i31S/2y5wL4ylV0dOFP1L2b3+1sOD" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+
+    <script>
+        // --- Dark Mode ---
+        // This script runs after the DOM is built to ensure the class is not removed.
+        // Updated to handle MS Teams themes
+        microsoftTeams.app.initialize().then(() => {
+            console.log("Teams App SDK Initialized.");
+            // Get the initial theme
+            microsoftTeams.app.getContext().then((context) => {
+                if (context.page.frameContext === "settings") {
+                    // If this is the configuration page, you might want to do something specific
+                } else {
+                    applyTheme(context.theme);
+                }
+            });
+
+            // Register a handler for theme changes
+            microsoftTeams.app.registerOnThemeChangeHandler((theme) => {
+                applyTheme(theme);
+            });
+
+            function applyTheme(theme) {
+                const htmlElement = document.documentElement;
+                htmlElement.classList.remove('dark-mode', 'high-contrast');
+                if (theme === 'dark') htmlElement.classList.add('dark-mode');
+                if (theme === 'contrast') htmlElement.classList.add('high-contrast');
+            }
+        });
+    </script>
+
+    <script src="script.js?v=1.1.29" defer></script>
+</body>
+</html>
