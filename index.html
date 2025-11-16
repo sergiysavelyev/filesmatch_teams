@@ -1,35 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script data-cookieconsent="ignore">    window.dataLayer = window.dataLayer || [];    function gtag() {        dataLayer.push(arguments);    }    gtag("consent", "default", {        ad_personalization: "denied",        ad_storage: "denied",        ad_user_data: "denied",        analytics_storage: "denied",        functionality_storage: "denied",        personalization_storage: "denied",        security_storage: "granted",        wait_for_update: 500,    });    gtag("set", "ads_data_redaction", true);    gtag("set", "url_passthrough", false);</script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L9S57FEJHB"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-L9S57FEJHB');
-    </script>
-
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-MDJQBQRJ');</script>
-    <!-- End Google Tag Manager -->
-
     <meta charset="UTF-8">
     <!-- Recommended: Add a Content Security Policy to mitigate XSS attacks -->
     <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' https:;
-        script-src 'self' https://cdnjs.cloudflare.com https://www.googletagmanager.com https://consent.cookiebot.com https://consentcdn.cookiebot.com https://static.cloudflareinsights.com 'unsafe-eval' 'unsafe-inline';
-        style-src 'self' https://fonts.googleapis.com 'unsafe-inline' https://www.googletagmanager.com;
+        default-src 'self' https:; 
+        script-src 'self' https://res.cdn.office.net https://cdnjs.cloudflare.com 'unsafe-eval' 'unsafe-inline';
+        style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
         font-src 'self' https://fonts.gstatic.com;
-        img-src 'self' data: https://www.google-analytics.com https://imgsct.cookiebot.com https://www.googletagmanager.com;
-        frame-src 'self' https://consentcdn.cookiebot.com;
-        connect-src 'self' https://www.youtube.com https://cdnjs.cloudflare.com https://www.google-analytics.com https://consent.cookiebot.com https://consentcdn.cookiebot.com https://www.googletagmanager.com;">
+        img-src 'self' data:;
+        frame-src 'self' https://www.youtube.com;
+        connect-src 'self' https://www.youtube.com https://cdnjs.cloudflare.com;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Files Matching and Comparison Tool</title>
     <link rel="stylesheet" href="style.css?v=1.1.29">
@@ -133,10 +114,6 @@
     </style>
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MDJQBQRJ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
     <header>
         <div class="header-main-content">
             <div class="header-title-container">
@@ -145,7 +122,7 @@
             </div>
             <p>Select two files (CSV, Excel, JSON, etc.), match key columns by selecting corresponding headers, and compare their content. Your data never leaves your device, as all the comparison operations are handled locally.</p>
         </div>
-    <div class="header-actions">
+        <div class="header-actions">
             <button id="reset-all-btn" class="btn btn-secondary btn-sm hidden" title="Clear all files and settings">Clear All</button>
             <div class="dropdown-container">
                 <button id="tutorial-dropdown-btn" class="btn btn-secondary btn-sm">
@@ -161,7 +138,8 @@
                         <span>Files Match on YouTube</span>
                     </a>
                 </div>
-            </div>        </div>
+            </div>
+        </div>
     </header>
 
     <main>
@@ -548,20 +526,6 @@
                 <li><strong>Force Majeure:</strong> We are not liable for any failure or delay in the performance of the website's services due to events beyond our reasonable control, including but not limited to natural disasters, war, terrorism, or technical failures.</li>
             </ul>
 
-            <h2>10. Analytics and Third-Party Services</h2>
-            <ul>
-                <li><strong>Google Analytics:</strong> This website uses Google Analytics 4 (GA4) to collect information about how users interact with our site. This service uses first-party cookies to gather anonymous usage data, such as page views, session duration, and user interactions. This information helps us understand user behavior and improve the website.</li>
-                <li><strong>Data Usage:</strong> The data collected by Google Analytics is used by us for internal analysis to enhance the functionality and user experience of the tool. Google also uses this data in accordance with its own privacy policy. For more information on how Google uses data when you use our site, please visit <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">Google's Privacy & Terms</a>.</li>
-                <li><strong>Consent:</strong> We use Google Consent Mode to manage your analytics preferences. Your consent for the use of analytics cookies will be requested via a consent banner upon your first visit. You can accept or decline the use of these cookies. Your choice will be respected on subsequent visits.</li>
-            </ul>
-
-            <h2>11. Cookie Policy</h2>
-            <ul>
-                <li><strong>What are Cookies:</strong> Cookies are small text files stored on your device by your web browser. We use cookies to enable certain functionalities and to collect analytics data.</li>
-                <li><strong>Types of Cookies:</strong> We use essential cookies for core website functionality and analytics cookies (via Google Analytics) to understand user engagement. By using our website, you may also be subject to third-party cookies from services like Google.</li>
-                <li><strong>Your Choices:</strong> You can control and manage cookies in various ways, including through our cookie consent banner and your browser settings. Please note that disabling essential cookies may affect the functionality of the website.</li>
-            </ul>
-
             <p>If you have any questions or concerns about these Terms and Conditions, please contact us via feedback@filesmatch.com.</p>
 
             </div>
@@ -586,7 +550,6 @@
                 <ul>
                     <li><strong>Information You Provide:</strong> We do not require you to create an account or provide any Personal Identifiable Information (PII) to use our core service. If you contact us via email, we will use your email address solely to respond to your inquiry.</li>
                     <li><strong>File Data:</strong> All file processing occurs entirely within your browser on your own computer (client-side). Your files and their contents are <strong>never</strong> uploaded to our servers.</li>
-                    <li><strong>Usage and Analytics Data:</strong> We use Google Analytics 4 (GA4) to collect anonymous information about how you interact with our website. This includes data such as which features are used, session duration, and general user engagement patterns. This data is aggregated and does not personally identify you.</li>
                 </ul>
 
                 <h2>2. How We Use Your Information</h2>
@@ -594,7 +557,6 @@
                     <li><strong>To Improve Our Service:</strong> The anonymous analytics data collected through Google Analytics helps us understand how our tool is used, identify popular features, and guide future improvements.</li>
                     <li><strong>To Respond to Inquiries:</strong> If you contact us, we use the information you provide to address your questions, feedback, or support requests.</li>
                 </ul>
-
                 <h2>3. File Uploads & Processing</h2>
                 <ul>
                     <li><strong>Temporary processing:</strong> Files uploaded to perform comparisons are processed in-memory or in temporary storage only for the duration required to complete the comparison. After processing, files and intermediate results are deleted unless you explicitly request otherwise.</li>
@@ -602,14 +564,6 @@
                     <li><strong>Prohibited content:</strong> Do not upload confidential, highly sensitive, or regulated personal data (for example, financial account numbers, medical records, or unredacted PII) unless you have explicit assurances and controls in place.</li>
                 </ul>
 
-                <h2>4. Use of Cookies</h2>
-                <ul>
-                    <li><strong>Google Analytics:</strong> We use Google Analytics 4, which uses first-party cookies to distinguish users and analyze website traffic. The information generated by the cookie about your use of the website is transmitted to and stored by Google.</li>
-                    <li><strong>Google's Use of Data:</strong> Google uses this information to evaluate your use of our website, compile reports on website activity for us, and provide other services relating to website activity and internet usage. For more details, please review <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">how Google uses information from sites or apps that use their services</a>.</li>
-                    <li><strong>Your Consent:</strong> We use Google Consent Mode to manage your preferences for analytics tracking. Upon your first visit, you will be asked for consent to use analytics cookies. You can accept or decline, and your choice will be respected.</li>
-                </ul>
-                <h3>Cookie Declaration</h3>
-                <script id="CookieDeclaration" src="https://consent.cookiebot.com/67e2999f-b4fa-481a-b21f-41bf53e8ea37/cd.js" type="text/javascript" async></script>
                 <h2>5. Data Security</h2>
                 <ul>
                     <li><strong>Reasonable measures:</strong> We implement reasonable administrative, technical, and physical safeguards designed to protect data in our possession against unauthorized access, disclosure, alteration, or destruction.</li>
@@ -617,13 +571,8 @@
                 </ul>
 
                 <h2>6. Data Retention</h2>
-                <ul>
-                    <li>We do not retain your file data. Analytics data is retained by Google according to their data retention policies. Contact information from emails is retained only as long as necessary to resolve your inquiry.</li>
-                </ul>
-
                 <h2>7. Your Rights and Choices</h2>
                 <ul>
-                    <li><strong>Cookie Consent:</strong> You have the right to accept or decline the use of analytics cookies via our consent banner.</li>
                     <li><strong>Browser Settings:</strong> You can also control cookies through your web browser's settings. Please note that disabling essential cookies may impact the website's functionality.</li>
                 </ul>
 
